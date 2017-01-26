@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Domain\User\UserRepository;
 use Illuminate\Console\Command;
 
 class UserCreate extends Command
@@ -42,17 +43,26 @@ class UserCreate extends Command
         $userName = $arguments['name'];
         $userPassword = $arguments['password'];
         $userInfo = $arguments['info'];
-/*
-        $user = new User();
-        $user->setId(1);
-        $user->setUsername('jwage');
 
-        $om = $this->getYourObjectManager();
-        $om->persist($user);
-        $om->flush(); // insert the new document
-        */
-        $this->info("Пользователь успешно добавлен!");
-        $this->error("Ошибка добавления пользователя " . $userName . "!");
-        //
+        $data = [
+            'name' => $userName,
+            'password' => $userPassword,
+            'info' => $userInfo
+        ];
+
+        $userRepository = \App::make(UserRepository::class);
+        $userEntity = $userRepository->findOneBy(['name' => $userName]);
+
+        if (is_null($userEntity)) {
+            $userEntity = $userRepository->create($data);
+            $user = $userRepository->save($userEntity);
+
+            if (!is_null($user->getId())) {
+                $this->info("Пользователь " . $userName . " успешно добавлен!");
+            } else $this->error("Ошибка добавления пользователя " . $userName . "!");
+        } else $this->error("Пользователь с таким именем " . $userName . " уже существует!");
+
+
+        return true;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Domain\User\UserRepository;
 use Illuminate\Console\Command;
 
 class UserUpdate extends Command
@@ -11,7 +12,7 @@ class UserUpdate extends Command
      *
      * @var string
      */
-    protected $signature = 'update_user';
+    protected $signature = 'update_user {name : Имя пользователя} {info : Новая информация о пользователе}';
 
     /**
      * The console command description.
@@ -37,13 +38,27 @@ class UserUpdate extends Command
      */
     public function handle()
     {
-        /*
-        $user = $om->find('User', 1);
-        echo $user->getUsername(); // prints "jwage"
+        $arguments = $this->arguments();
 
-        $user->setUsername('jonwge'); // change the obj in memory
+        $userName = $arguments['name'];
+        $userInfo = $arguments['info'];
 
-        $om->flush(); // updates the object in the database*/
-        //
+        $data = [
+            'info' => $userInfo
+        ];
+
+        $userRepository = \App::make(UserRepository::class);
+        $userEntity = $userRepository->findOneBy(['name' => $userName]);
+
+        if (!is_null($userEntity)) {
+            $user = $userRepository->update($data, $userEntity->getId());
+            $userRepository->save($user);
+
+            if ($user->getInfo() == $userInfo) {
+                $this->info("Информация о пользователе " . $userName . " успешно изменена!");
+            } else $this->error("Не удалось обновить информацию о пользователе " . $userName . "!");
+        } else $this->error("Пользователь с именем " . $userName . " не найден!");
+
+        return true;
     }
 }

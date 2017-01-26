@@ -1,8 +1,5 @@
 <?php
 
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use App\Domain\User\UserRepository;
 
 class UserRepositoryTest extends TestCase
@@ -20,7 +17,7 @@ class UserRepositoryTest extends TestCase
     {
         $data = [
             'name' => 'admin',
-            'password' => md5('admin'),
+            'password' => 'admin',
             'info' => 'info'
         ];
 
@@ -32,18 +29,18 @@ class UserRepositoryTest extends TestCase
     public function testUpdateAndSave()
     {
         $data = [
-            'password' => md5('admin2')
+            'password' => 'admin2'
         ];
 
         $user = $this->repository->update($data, self::$user->getId());
         self::$user = $this->repository->save($user);
         $this->assertEquals($data['password'], self::$user->getPassword());
     }
-
+/*
     public function testDelete()
     {
         $user = $this->repository->find(self::$user->getId());
         $result = $this->repository->delete($user);
         $this->assertTrue($result);
-    }
+    }*/
 }
