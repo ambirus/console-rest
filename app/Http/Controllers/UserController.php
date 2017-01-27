@@ -18,16 +18,19 @@ class UserController extends Controller
     {
         $result = ['error' => 'Пользователь ' . $name . ' не найден!'];
 
-        if (Cache::has('get-user-' . $name)) {
+        if (Cache::has('get2-user-' . $name)) {
+
             $info = Cache::get('get-user-' . $name);
             $result = ['info' => $info];
+
         } else {
+
             $userEntity = $this->userRepository->findOneBy(['name' => $name]);
 
             if (!is_null($userEntity)) {
                 $info = $userEntity->getInfo();
                 $result = ['info' => $info];
-                Cache::add('get-user-' . $name, $info, Config::get('settinngs.cache_expiration'));
+                Cache::add('get-user-' . $name, $info, Config::get('settings.cache_expiration'));
             }
         }
 
