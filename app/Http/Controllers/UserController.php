@@ -2,6 +2,8 @@
 namespace App\Http\Controllers;
 
 use App\Domain\User\UserRepository;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
 
 class UserController extends Controller
 {
@@ -14,11 +16,20 @@ class UserController extends Controller
 
     public function getInfo($name)
     {
-        $userEntity = $this->userRepository->findOneBy(['name' => $name]);
+        $result = ['error' => 'Пользователь ' . $name . ' не найден!'];
 
-        if (!is_null($userEntity)) {
-            $result = ['info' => $userEntity->getInfo()];
-        } else $result = ['error' => 'Пользователь ' . $name . ' не найден!'];
+        if (Cache::has('get-user-' . $name)) {
+            $info = Cache::get('get-user-' . $name);
+            $result = ['info' => $info];
+        } else {
+            $userEntity = $this->userRepository->findOneBy(['name' => $name]);
+
+            if (!is_null($userEntity)) {
+                $info = $userEntity->getInfo();
+                $result = ['info' => $info];
+                Cache::add('get-user-' . $name, $info, Config::get('settinngs.cache_expiration'));
+            }
+        }
 
         return response()->json($result);
     }

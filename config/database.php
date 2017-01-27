@@ -107,6 +107,8 @@ return [
 
     'redis' => [
 
+        'client' => 'phpredis',
+
         'cluster' => false,
 
         'default' => [
