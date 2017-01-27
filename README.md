@@ -2,10 +2,10 @@
 
 Пример использования: 
 
-php artisan create_user <%username%> <%password%> <%info%> - создание пользователя (имя, пароль, информация)
-php artisan update_user <%username%> <%info%> - редактирование информации пользователя по имени
+**php artisan create_user <%username%> <%password%> <%info%>** - создание пользователя (имя, пароль, информация)
+**php artisan update_user <%username%> <%info%>** - редактирование информации пользователя по имени
 
-/api/get-info/<%username%> - получение информации о пользователе по имени и вывод информации в формате json
+**/api/get-info/<%username%>** - получение информации о пользователе по имени и вывод информации в формате json
 
  Тип кеширования можно выбирать, редактируя значение параметра CACHE_DRIVER в файле .env. Время жизни кеша задается 
  в файле настроек config/settings.php: параметр cache_expiration (в минутах)
